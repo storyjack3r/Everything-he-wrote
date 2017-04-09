@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<button onclick="drawLine()">button</button>
+<button onclick="correction()">correct</button>
+<canvas id="myCanvas" width="400" height="400"
+style="border:1px solid #d3d3d3;">
+Your browser does not support the canvas element.
+</canvas>
+
+<p>x=<span id="xspan"></span> </p>
+<p>y=<span id="yspan"></span></p>
+
+
+
+<script>
+
+var corrected=0;
+var xorigin=10;
+var yorigin=20;
+var xcoord=xorigin;
+var ycoord=yorigin;
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+console.log(ycoord);
+
+
+function reporter(){
+	document.getElementById("xspan").innerHTML=xcoord;
+	document.getElementById("yspan").innerHTML=ycoord;
+}
+
+function newline(){
+	if(xcoord>=390){
+		xcoord=xorigin;
+		yorigin+=35;
+		ycoord=yorigin;
+	}
+}
+
+function drawLine(){
+	// if(corrected==1){
+	// xcoord+=10;	
+	// corrected=0;
+	// }
+	
+	corrected=0;
+ctx.moveTo(xcoord,ycoord);
+xcoord+=10;
+ctx.lineTo(xcoord,ycoord);
+ctx.stroke();
+reporter();
+newline();
+}
+
+function correctionTest(){
+	if(corrected==1){
+		xcoord-=4;
+	}
+xbackSpacePos=xcoord-8;
+ybackSpacePos=ycoord-8;
+ctx.moveTo(xcoord, ycoord);
+// ctx.lineTo(xcoord,ycoord);
+ctx.quadraticCurveTo((xcoord+5), (ycoord), xcoord,ybackSpacePos);
+ctx.quadraticCurveTo((xbackSpacePos), (ybackSpacePos-5), xbackSpacePos, ybackSpacePos);
+ctx.quadraticCurveTo((xbackSpacePos-10), (ycoord), xbackSpacePos, ycoord);
+// ctx.lineTo(xbackSpacePos, ycoord);
+corrected=1;
+
+ctx.stroke();
+reporter();
+}
+
+function correction(){
+	if(corrected==1){
+		xcoord-=4;
+	}
+xbackSpacePos=xcoord-10;
+ybackSpacePos=ycoord-10;
+ctx.moveTo(xcoord, ycoord);
+// ctx.lineTo(xcoord,ycoord);
+ctx.lineTo(xcoord,ybackSpacePos);
+ctx.lineTo(xbackSpacePos, ybackSpacePos);
+ctx.lineTo(xbackSpacePos, ycoord);
+corrected=1;
+
+ctx.stroke();
+reporter();
+}
+
+</script>
+
+</body>
+</html>

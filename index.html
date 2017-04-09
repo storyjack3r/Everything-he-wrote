@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Every letter is precious</title>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="game-char.js"></script>
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  
+</head>
+<body onload="focusOnText()">
+ <div class="container">
+
+
+ <div class="row">
+  <div class="col-xs-6 col-md-6">
+  	<h2>What you let them read</h2>
+    <textarea style="width:100%; border:0;" rows="10" id="target" placeholder="Write down your thoughts, or a poem or a to-do list, or a letter, or a 100-word story, or a story in one line..."></textarea>
+  </div>
+  <div class="col-xs-6 col-md-6"><h2>What you actually wrote</h2><div id="newText"></div></div>
+</div>
+</div>
+
+<form>
+  
+    
+  
+</form>
+<button onclick="drawLine()">button</button>
+<button onclick="correction()">correct</button>
+ <canvas id="myCanvas" width="400" height="400"
+style="border:1px solid #d3d3d3;">
+Your browser does not support the canvas element.
+</canvas>
+
+<p>x=<span id="xspan"></span> </p>
+<p>y=<span id="yspan"></span></p>
+
+
+
+<script>
+var errors=0;
+var enterButton=0;
+var corrected=0;
+var xorigin=10;
+var yorigin=20;
+var xcoord=xorigin;
+var ycoord=yorigin;
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+console.log(ycoord);
+var bend;
+
+
+function reporter(){
+  document.getElementById("xspan").innerHTML=xcoord;
+  document.getElementById("yspan").innerHTML=ycoord;
+}
+
+function newline(){
+  if(xcoord>=390){
+    xcoord=xorigin;
+    yorigin+=35;
+    ycoord=yorigin;
+  }
+  else if (enterButton==1){
+   xcoord=xorigin;
+    yorigin+=35;
+    ycoord=yorigin;
+    enterButton=0; 
+  }
+}
+
+function drawLine(){
+  // if(corrected==1){
+  // xcoord+=10;  
+  // corrected=0;
+  // }
+  //idea for how to bend text but not resolved yet
+// var bend=(xcoord*(errors*.001))+1;
+ctx.moveTo(xcoord,ycoord);
+xcoord+=10;
+ctx.lineTo(xcoord,ycoord);
+ctx.stroke();
+reporter();
+newline();
+}
+
+
+function correction(){
+  if(corrected==1){
+    xcoord-=4;
+  }
+xbackSpacePos=xcoord-10;
+ybackSpacePos=ycoord-10;
+ctx.moveTo(xcoord, ycoord);
+// ctx.lineTo(xcoord,ycoord);
+ctx.lineTo(xcoord,ybackSpacePos);
+ctx.lineTo(xbackSpacePos, ybackSpacePos);
+ctx.lineTo(xbackSpacePos, ycoord);
+corrected=1;
+
+ctx.stroke();
+errors++;
+reporter();
+}
+
+// ----------------------------------------
+
+var everythingMissing="";
+var everythingTyped="";
+var keyPressed = 0;
+$( "#target" ).keydown(function( event ) {
+    if ( event.which == 8 ) {
+    correction();  
+  }
+  
+  });
+$( "#target" ).keypress(function( event ) {
+  if ( event.which == 13 ) {
+    enterButton=1;
+     newline();
+     console.log("code 13 innit?")
+  }
+
+drawLine()
+
+  keyPressed++;
+  console.log(keyPressed);
+  letterPressed=String.fromCharCode(event.keyCode);
+  	everythingTyped+=letterPressed;
+console.log(everythingTyped);
+document.getElementById("newText").innerHTML=everythingTyped;
+});
+ 
+$( "body" ).click(function() {
+  $( "#target" ).keypress();
+  
+});
+function focusOnText(){
+document.getElementById("target").focus();
+}
+
+function whatWentMissing(){
+	var s=document.getElementById("target").value;
+	var d=0;//difference between strings
+		for (var i = 0; i < s.length; i++) {
+			var thisLetter = s.charAt(i);
+			var aggr=i+d;
+			if (thisLetter != everythingTyped.charAt(aggr)){
+				everythingMissing+=everythingTyped.charAt(aggr);
+				console.log(everythingMissing);
+			};
+		}
+}
+
+
+
+</script>
+ 
+
+
+</body>
+</html>
